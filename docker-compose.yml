@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: taskflow_db
+    environment:
+      POSTGRES_USER: taskflow
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: taskflow
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend-node
+    container_name: taskflow_backend
+    environment:
+      - DATABASE_URL=postgresql://taskflow:password@db:5432/taskflow?schema=public
+      - PORT=8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./web
+    container_name: taskflow_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  pgdata:
