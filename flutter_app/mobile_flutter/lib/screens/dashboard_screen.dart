@@ -88,7 +88,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     final user = context.watch<AuthState>().user;
     return Scaffold(
-      appBar: AppBar(title: const Text('Dashboard'), actions: const [AccountButton()]),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset('assets/logo.jpg', width: 28, height: 28, semanticLabel: 'TaskFlow logo'),
+            ),
+            const SizedBox(width: 10),
+            const Text('Dashboard'),
+          ],
+        ),
+        actions: const [AccountButton()],
+      ),
       body: _data == null && _loading
           ? const LoadingView(label: 'Loading dashboard')
           : RefreshIndicator(

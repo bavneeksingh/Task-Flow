@@ -97,7 +97,19 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Calendar'), actions: const [AccountButton()]),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset('assets/logo.jpg', width: 28, height: 28, semanticLabel: 'TaskFlow logo'),
+            ),
+            const SizedBox(width: 10),
+            const Text('Calendar'),
+          ],
+        ),
+        actions: const [AccountButton()],
+      ),
       body: _tasks == null && _loading
           ? const LoadingView(label: 'Loading tasks')
           : RefreshIndicator(

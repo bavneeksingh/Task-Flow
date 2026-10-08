@@ -100,7 +100,19 @@ class _ProjectsScreenState extends State<ProjectsScreen> {
   Widget build(BuildContext context) {
     final projects = _projects;
     return Scaffold(
-      appBar: AppBar(title: const Text('Projects'), actions: const [AccountButton()]),
+      appBar: AppBar(
+        title: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset('assets/logo.jpg', width: 28, height: 28, semanticLabel: 'TaskFlow logo'),
+            ),
+            const SizedBox(width: 10),
+            const Text('Projects'),
+          ],
+        ),
+        actions: const [AccountButton()],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _create,
         icon: const Icon(Icons.add_rounded),

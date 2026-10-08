@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { StatusBadge } from "../components/Badge";
 import ProjectFormModal from "../components/ProjectFormModal";
@@ -11,6 +11,7 @@ import { PROJECT_STATUSES, formatDate } from "../utils/format";
 
 export default function Projects() {
   const toast = useToast();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get("search") || "";
   const status = searchParams.get("status") || "";
@@ -88,25 +89,23 @@ export default function Projects() {
       {projects && projects.length > 0 && (
         <ul className={`rows${loading ? " is-stale" : ""}`}>
           {projects.map((p) => (
-            <li key={p.id}>
-              <Link to={`/projects/${p.id}`} className="row-link" style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div className="row-main">
-                  <span className="row-title">{p.name}</span>
-                  {p.description && <p className="row-desc">{p.description}</p>}
-                  {(p.start_date || p.end_date) && (
-                    <p className="muted small" style={{ marginTop: 4 }}>
-                      📅 {p.start_date ? formatDate(p.start_date) : "No start"} → {p.end_date ? formatDate(p.end_date) : "no end"}
-                    </p>
-                  )}
-                </div>
-                <StatusBadge status={p.status} />
-                <div className="row-ribbon">
-                  <StatusRibbon pending={p.pending_count} inProgress={p.in_progress_count} completed={p.completed_count} />
-                  <span className="muted small">
-                    {p.task_count === 0 ? "No tasks" : `${p.completed_count}/${p.task_count} done`}
-                  </span>
-                </div>
-              </Link>
+            <li key={p.id} className="row-link" style={{ cursor: 'pointer' }} onClick={() => navigate(`/projects/${p.id}`)}>
+              <div className="row-main">
+                <span className="row-title">{p.name}</span>
+                {p.description && <p className="row-desc">{p.description}</p>}
+                {(p.start_date || p.end_date) && (
+                  <p className="muted small" style={{ marginTop: 4 }}>
+                    📅 {p.start_date ? formatDate(p.start_date) : "No start"} → {p.end_date ? formatDate(p.end_date) : "no end"}
+                  </p>
+                )}
+              </div>
+              <StatusBadge status={p.status} />
+              <div className="row-ribbon">
+                <StatusRibbon pending={p.pending_count} inProgress={p.in_progress_count} completed={p.completed_count} />
+                <span className="muted small">
+                  {p.task_count === 0 ? "No tasks" : `${p.completed_count}/${p.task_count} done`}
+                </span>
+              </div>
             </li>
           ))}
         </ul>
