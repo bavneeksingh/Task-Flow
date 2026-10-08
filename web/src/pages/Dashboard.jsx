@@ -132,21 +132,23 @@ export default function Dashboard() {
           
           <ul className="rows">
             {recentProjects.map((p) => (
-              <li key={p.id} className="row-link" style={{ padding: '20px' }}>
-                <div className="row-header">
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--pastel-pink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
-                      🎨
+              <li key={p.id}>
+                <Link to={`/projects/${p.id}`} className="row-link" style={{ padding: '20px', textDecoration: 'none', color: 'inherit' }}>
+                  <div className="row-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: 'var(--pastel-pink)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem' }}>
+                        🎨
+                      </div>
+                      <span className="row-title" style={{ fontSize: '1.1rem' }}>{p.name}</span>
                     </div>
-                    <Link to={`/projects/${p.id}`} className="row-title" style={{ fontSize: '1.1rem' }}>{p.name}</Link>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ width: '80px' }}>
-                      <StatusRibbon pending={p.pending_count} inProgress={p.in_progress_count} completed={p.completed_count} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '80px' }}>
+                        <StatusRibbon pending={p.pending_count} inProgress={p.in_progress_count} completed={p.completed_count} />
+                      </div>
+                      <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{p.completed_count}/{p.task_count}</span>
                     </div>
-                    <span style={{ fontWeight: 700, fontSize: '0.9rem' }}>{p.completed_count}/{p.task_count}</span>
                   </div>
-                </div>
+                </Link>
               </li>
             ))}
           </ul>
