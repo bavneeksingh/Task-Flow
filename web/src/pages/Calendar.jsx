@@ -6,8 +6,12 @@ import { EmptyState, ErrorState, Spinner } from "../components/States";
 import { useAsync } from "../hooks/useAsync";
 
 export default function Calendar() {
+  const toLocalISO = (d) => {
+    const pad = (n) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  };
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDateStr, setSelectedDateStr] = useState(new Date().toISOString().split("T")[0]);
+  const [selectedDateStr, setSelectedDateStr] = useState(toLocalISO(new Date()));
 
   // Fetch all tasks for the user
   const { data: tasks, error, loading, reload } = useAsync(() => api.listAllTasks(), []);
@@ -30,13 +34,13 @@ export default function Calendar() {
     const prevMonthLastDay = new Date(year, month, 0).getDate();
     for (let i = startingDayOfWeek - 1; i >= 0; i--) {
       const d = prevMonthLastDay - i;
-      const dateStr = new Date(year, month - 1, d).toISOString().split("T")[0];
+      const dateStr = toLocalISO(new Date(year, month - 1, d));
       days.push({ day: d, dateStr, isCurrentMonth: false });
     }
     
     // Current month days
     for (let i = 1; i <= daysInMonth; i++) {
-      const dateStr = new Date(year, month, i).toISOString().split("T")[0];
+      const dateStr = toLocalISO(new Date(year, month, i));
       days.push({ day: i, dateStr, isCurrentMonth: true });
     }
     
@@ -44,7 +48,7 @@ export default function Calendar() {
     const totalCells = Math.ceil(days.length / 7) * 7;
     let nextMonthDay = 1;
     while (days.length < totalCells) {
-      const dateStr = new Date(year, month + 1, nextMonthDay).toISOString().split("T")[0];
+      const dateStr = toLocalISO(new Date(year, month + 1, nextMonthDay));
       days.push({ day: nextMonthDay, dateStr, isCurrentMonth: false });
       nextMonthDay++;
     }
@@ -114,7 +118,7 @@ export default function Calendar() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px' }}>
               {calendarDays.map((d, i) => {
                 const isSelected = d.dateStr === selectedDateStr;
-                const isToday = d.dateStr === new Date().toISOString().split("T")[0];
+                const isToday = d.dateStr === toLocalISO(new Date());
                 const dayTasks = tasksByDate[d.dateStr] || [];
                 
                 return (
@@ -174,7 +178,12 @@ export default function Calendar() {
 
           {/* Right: Tasks for Selected Date */}
           <div className="panel" style={{ flex: '1 1 320px', minWidth: 0, marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
-            <h2 style={{ fontSize: '1.4rem', marginBottom: '4px' }}>Tasks for {new Date(selectedDateStr).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}</h2>
+            <h2 style={{ fontSize: '1.4rem', marginBottom: '4px' }}>Tasks for {
+              (() => {
+                const [y, m, d] = selectedDateStr.split("-").map(Number);
+                return new Date(y, m - 1, d).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+              })()
+            }</h2>
             <p className="muted small" style={{ marginBottom: '24px' }}>
               {selectedTasks.length === 0 ? "You have a free day!" : `You have ${selectedTasks.length} task${selectedTasks.length === 1 ? '' : 's'} scheduled.`}
             </p>
