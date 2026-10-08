@@ -67,6 +67,9 @@ class _AuthScreenState extends State<AuthScreen> {
           _formError = e.message;
         }
       });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _formError = 'Error: $e');
     } finally {
       if (mounted) setState(() => _busy = false);
     }

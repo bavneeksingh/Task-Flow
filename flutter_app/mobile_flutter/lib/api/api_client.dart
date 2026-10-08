@@ -35,14 +35,10 @@ class TokenStore {
     if (_loaded) return _cached;
     try {
       _cached = await _storage.read(key: _key);
-    } on PlatformException {
-      // Android can restore app data from a backup without the Keystore key that
-      // encrypted it. The value is then unreadable, so start fresh instead of crashing.
+    } catch (_) {
       try {
         await _storage.deleteAll();
-      } on PlatformException {
-        // nothing more we can do; treat as signed out
-      }
+      } catch (_) {}
       _cached = null;
     }
     _loaded = true;
@@ -50,15 +46,21 @@ class TokenStore {
   }
 
   Future<void> write(String token) async {
-    await _storage.write(key: _key, value: token);
     _cached = token;
     _loaded = true;
+    try {
+      await _storage.write(key: _key, value: token);
+    } catch (_) {
+      // In-memory token is retained if keychain write fails on desktop
+    }
   }
 
   Future<void> clear() async {
     _cached = null;
     _loaded = true;
-    await _storage.delete(key: _key);
+    try {
+      await _storage.delete(key: _key);
+    } catch (_) {}
   }
 }
 
