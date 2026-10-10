@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import Field from "../components/Field";
 import { FormError } from "../components/States";
@@ -13,6 +13,11 @@ export default function AuthPage({ mode }) {
   const [errors, setErrors] = useState({});
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setErrors({});
+    setFormError("");
+  }, [mode]);
 
   if (user) return <Navigate to={location.state?.from?.pathname || "/"} replace />;
 
